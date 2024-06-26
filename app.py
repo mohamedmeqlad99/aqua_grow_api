@@ -49,3 +49,17 @@ def recommendation():
     data = request.get_json()
     location = data.get('location')
     crop = data.get('crop')
+
+    if not location or not crop:
+        return jsonify({'error': 'Location and crop are required'}), 400
+
+    temperature, rainfall = fetch_weather_data(location)
+    
+    if temperature is None or rainfall is None:
+        return jsonify({'error': 'Could not fetch weather data'}), 500
+
+    if crop not in crop_mapping:
+        return jsonify({'error': 'Invalid crop type'}), 400
+
+    crop_code = crop_mapping[crop]
+
