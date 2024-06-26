@@ -43,3 +43,9 @@ def recommendation():
     crop_code = crop_mapping[crop]
     else:
         return None, None
+
+@app.route('/api/recommendation', methods=['POST'])
+def recommendation():
+    data = request.get_json()
+    location = data.get('location')
+    crop = data.get('crop')
