@@ -57,6 +57,17 @@ def recommendation():
     
     if temperature is None or rainfall is None:
         return jsonify({'error': 'Could not fetch weather data'}), 500
+ # Prepare the input data for the model
+    input_data = pd.DataFrame([[temperature, rainfall, crop_code]], columns=['temperature', 'rainfall', 'crop'])
+    
+    # Make a prediction
+    predicted_water_usage = model.predict(input_data)[0]
+
+    return jsonify({'recommendation': f'{predicted_water_usage:.2f} liters of water per square meter'})
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'healthy'})
 
     if crop not in crop_mapping:
         return jsonify({'error': 'Invalid crop type'}), 400
