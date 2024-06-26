@@ -73,4 +73,6 @@ def health():
         return jsonify({'error': 'Invalid crop type'}), 400
 
     crop_code = crop_mapping[crop]
+if __name__ == '__main__':
+    app.run(debug=True)
 
