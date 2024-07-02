@@ -13,9 +13,10 @@ with open('crop_water_usage_model.pkl', 'rb') as f:
 crop_mapping = {'rice': 0, 'wheat': 1, 'beets': 2, 'corn': 3, 'potatoes': 4}
 
 # Function to fetch weather data from an external API
-def fetch_weather_data(location):
-    api_key = "6118487079e745cc8db91725240207"  # New API key
-    url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={location}"
+def fetch_weather_data():
+    api_key = "6118487079e745cc8db91725240207"  # Replace with your actual API key
+    location = "Cairo"  # Fixed location
+    url = f"http://api.weatherapi.com/v1/forecast.json?key={api_key}&q={location}&days=7"
     response = requests.get(url)
     
     print(f"Request URL: {url}")
@@ -24,46 +25,8 @@ def fetch_weather_data(location):
 
     if response.status_code == 200:
         data = response.json()
-        temperature = data['current']['temp_c']
-        rainfall = data['current']['precip_mm']
-        return temperature, rainfall
-    else:
-        return None, None
-
-@app.route('/')
-def index():
-    return "Welcome to the Aqua Grow API!"
-
-@app.route('/api/recommendation', methods=['POST'])
-def recommendation():
-    data = request.get_json()
-    location = data.get('location')
-    crop = data.get('crop')
-
-    if not location or not crop:
-        return jsonify({'error': 'Location and crop are required'}), 400
-
-    temperature, rainfall = fetch_weather_data(location)
-    
-    if temperature is None or rainfall is None:
-        return jsonify({'error': 'Could not fetch weather data'}), 500
-
-    if crop not in crop_mapping:
-        return jsonify({'error': 'Invalid crop type'}), 400
-
-    crop_code = crop_mapping[crop]
-
-    # Prepare the input data for the model
-    input_data = pd.DataFrame([[temperature, rainfall, crop_code]], columns=['temperature', 'rainfall', 'crop'])
-    
-    # Make a prediction
-    predicted_water_usage = model.predict(input_data)[0]
-
-    return jsonify({'recommendation': f'{predicted_water_usage:.2f} liters of water per square meter'})
-
-@app.route('/api/health', methods=['GET'])
-def health():
-    return jsonify({'status': 'healthy'})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        forecast_days = data['forecast']['forecastday']
+        weekly_data = []
+        for day in forecast_days:
+            date = day['date']
+            temperature = day
