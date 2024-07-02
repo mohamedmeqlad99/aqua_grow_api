@@ -14,15 +14,26 @@ crop_mapping = {'rice': 0, 'wheat': 1, 'beets': 2, 'corn': 3, 'potatoes': 4}
 
 # Function to fetch weather data from an external API
 def fetch_weather_data(location):
-    api_key = "your_api_key_here"  # Replace with your actual API key
+    api_key = "6118487079e745cc8db91725240207"  # New API key
     url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={location}"
     response = requests.get(url)
     
+    print(f"Request URL: {url}")
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Content: {response.content}")
+
     if response.status_code == 200:
         data = response.json()
         temperature = data['current']['temp_c']
         rainfall = data['current']['precip_mm']
         return temperature, rainfall
+    else:
+        return None, None
+
+@app.route('/')
+def index():
+    return "Welcome to the Aqua Grow API!"
+
 @app.route('/api/recommendation', methods=['POST'])
 def recommendation():
     data = request.get_json()
@@ -42,20 +53,7 @@ def recommendation():
 
     crop_code = crop_mapping[crop]
 
-@app.route('/api/recommendation', methods=['POST'])
-def recommendation():
-    data = request.get_json()
-    location = data.get('location')
-    crop = data.get('crop')
-
-    if not location or not crop:
-        return jsonify({'error': 'Location and crop are required'}), 400
-
-    temperature, rainfall = fetch_weather_data(location)
-    
-    if temperature is None or rainfall is None:
-        return jsonify({'error': 'Could not fetch weather data'}), 500
- # Prepare the input data for the model
+    # Prepare the input data for the model
     input_data = pd.DataFrame([[temperature, rainfall, crop_code]], columns=['temperature', 'rainfall', 'crop'])
     
     # Make a prediction
@@ -67,10 +65,5 @@ def recommendation():
 def health():
     return jsonify({'status': 'healthy'})
 
-    if crop not in crop_mapping:
-        return jsonify({'error': 'Invalid crop type'}), 400
-
-    crop_code = crop_mapping[crop]
 if __name__ == '__main__':
     app.run(debug=True)
-
