@@ -41,8 +41,6 @@ def recommendation():
         return jsonify({'error': 'Invalid crop type'}), 400
 
     crop_code = crop_mapping[crop]
-    else:
-        return None, None
 
 @app.route('/api/recommendation', methods=['POST'])
 def recommendation():
