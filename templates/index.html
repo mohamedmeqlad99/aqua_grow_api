@@ -41,14 +41,14 @@
                     console.log(data); // Debug: log the data
                     data.recommendations.forEach(rec => {
                         const li = document.createElement('li');
-                        li.textContent = ${rec.date}: ${rec.recommended_water_usage};
+                        li.textContent = `${rec.date}: ${rec.recommended_water_usage}`;
                         recommendations.appendChild(li);
                     });
                 } else {
                     const errorData = await response.json();
                     console.error(errorData); // Debug: log the error
                     const li = document.createElement('li');
-                    li.textContent = Error: ${errorData.error};
+                    li.textContent = `Error: ${errorData.error}`;
                     recommendations.appendChild(li);
                 }
             } catch (error) {

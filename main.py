@@ -17,9 +17,11 @@ def fetch_weather_data():
     api_key = "6118487079e745cc8db91725240207"  # Replace with your actual API key
     location = "Cairo"  # Fixed location
     url = f"http://api.weatherapi.com/v1/forecast.json?key={api_key}&q={location}&days=7"
-    response = requests.get(url)
     
-    if response.status_code == 200:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise HTTPError for bad responses
+        
         data = response.json()
         forecast_days = data['forecast']['forecastday']
         weekly_data = []
@@ -29,7 +31,8 @@ def fetch_weather_data():
             rainfall = day['day']['totalprecip_mm']
             weekly_data.append((date, temperature, rainfall))
         return weekly_data
-    else:
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching weather data: {e}")
         return None
 
 @app.route('/')
