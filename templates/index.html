@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aqua Grow Recommendation</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <h1>Aqua Grow Water Usage Recommendation</h1>
+    <form id="cropForm">
+        <label for="crop">Select Crop:</label>
+        <select id="crop" name="crop">
+            <option value="rice">Rice</option>
+            <option value="wheat">Wheat</option>
+            <option value="beets">Beets</option>
+            <option value="corn">Corn</option>
+            <option value="potatoes">Potatoes</option>
+        </select>
+        <button type="button" onclick="getRecommendation()">Get Recommendation</button>
+    </form>
+
+    <h2>Recommendations:</h2>
+    <ul id="recommendations"></ul>
+
+    <script>
+        async function getRecommendation() {
+            const crop = document.getElementById('crop').value;
+            try {
+                const response = await fetch('/api/recommendation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ crop: crop })
+                });
+
+                const recommendations = document.getElementById('recommendations');
+                recommendations.innerHTML = '';
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data); // Debug: log the data
+                    data.recommendations.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = ${rec.date}: ${rec.recommended_water_usage};
+                        recommendations.appendChild(li);
+                    });
+                } else {
+                    const errorData = await response.json();
+                    console.error(errorData); // Debug: log the error
+                    const li = document.createElement('li');
+                    li.textContent = Error: ${errorData.error};
+                    recommendations.appendChild(li);
+                }
+            } catch (error) {
+                console.error('Error:', error); // Debug: log any errors
+            }
+        }
+    </script>
+</body>
+</html>
