@@ -41,7 +41,7 @@
                     console.log(data); // Debug: log the data
                     data.recommendations.forEach(rec => {
                         const li = document.createElement('li');
-                        li.textContent = `${rec.date}: ${rec.recommended_water_usage}`;
+                        li.textContent = `${rec.date}: Temperature ${rec.temperature}°C, ${rec.recommended_water_usage}`;
                         recommendations.appendChild(li);
                     });
                 } else {

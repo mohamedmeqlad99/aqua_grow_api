@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import requests
 import pickle
 import pandas as pd
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS
 
 # Load the trained machine learning model
 with open('crop_water_usage_model.pkl', 'rb') as f:
@@ -65,8 +67,16 @@ def recommendation():
         
         # Make a prediction
         predicted_water_usage = model.predict(input_data)[0]
+
+        # Correct the water usage manually if the model prediction is counter-intuitive
+        if crop == 'wheat':
+            predicted_water_usage = min(predicted_water_usage, 500)  # Ensure wheat doesn't have too high water usage
+        elif crop == 'rice':
+            predicted_water_usage = max(predicted_water_usage, 1000)  # Ensure rice has a higher water usage
+
         recommendations.append({
             'date': date,
+            'temperature': temperature,
             'recommended_water_usage': f'{predicted_water_usage:.2f} liters of water per square meter'
         })
 
@@ -78,3 +88,4 @@ def health():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
