@@ -1,12 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import requests
 import pickle
 import pandas as pd
+from pyngrok import ngrok
+
+port_no = 5000
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
-
 # Load the trained machine learning model
 with open('crop_water_usage_model.pkl', 'rb') as f:
     model = pickle.load(f)
@@ -82,5 +86,4 @@ def health():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
