@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
@@ -7,12 +6,20 @@ import pickle
 import pandas as pd
 from pyngrok import ngrok
 
+# Print the current working directory
+print("Current working directory:", os.getcwd())
+
 port_no = 5000
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
+
+# Path to the model file
+model_path = os.path.join(os.getcwd(), 'aqua_grow_api', 'crop_water_usage_model.pkl')
+print("Model path:", model_path)
+
 # Load the trained machine learning model
-with open('crop_water_usage_model.pkl', 'rb') as f:
+with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
 # Mapping for crop names
@@ -86,4 +93,3 @@ def health():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
